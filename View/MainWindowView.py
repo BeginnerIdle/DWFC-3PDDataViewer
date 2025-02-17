@@ -1,10 +1,11 @@
 from ViewModel.ViewModelBase import ViewModelBase
 
-from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QGridLayout, QSizePolicy, QFileDialog
+from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QGridLayout, QSizePolicy, QFileDialog, QMessageBox
 from PySide6.QtGui import QIntValidator, QMouseEvent
 from PySide6.QtWebEngineWidgets import QWebEngineView
 
 from pathlib import Path
+import shutil
 
 class MainWindowView(QMainWindow):
     BINDING_PROPERTY_FILENAME = "FileName"
@@ -79,8 +80,9 @@ class MainWindowView(QMainWindow):
         self.__offsetLineEdit.setValidator(validator)
         controlPanelLayout.addWidget(self.__offsetLineEdit)
         # control panel - run
-        runButton = QPushButton("Run")
-        controlPanelLayout.addWidget(runButton)
+        exportButton = QPushButton("Export")
+        exportButton.clicked.connect(self.__onExportButtonClicked)
+        controlPanelLayout.addWidget(exportButton)
 
         return controlPanel
 
@@ -137,6 +139,18 @@ class MainWindowView(QMainWindow):
     def __onTriggerOffsetChanged(self):
         offset = int(self.__offsetLineEdit.text())
         self.__setViewModelProperty(self.BINDING_PROPERTY_TRIGGER_OFFSET, offset)
+
+    def __onExportButtonClicked(self):
+        filePath, _ = QFileDialog.getSaveFileName(self, "파일 저장", "", "html (*.html)")
+        if filePath:
+            sourceFile = self.__getViewModelProperty(self.BINDING_PROPERTY_HTML_FILENAME)
+
+            try:
+                shutil.copy2(sourceFile, filePath)
+                QMessageBox.information(self, "성공", "파일이 성공적으로 저장되었습니다.")
+            except Exception as e:
+                 QMessageBox.critical(self, "오류", f"파일 저장 중 오류가 발생했습니다: {str(e)}")
+
 #endregion
 
 #region MVVM Helper
