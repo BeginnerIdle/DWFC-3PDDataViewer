@@ -75,6 +75,7 @@ class MainWindowView(QMainWindow):
         # control panel - offset
         validator = QIntValidator()
         self.__offsetLineEdit = QLineEdit(str(self.__getViewModelProperty(self.BINDING_PROPERTY_TRIGGER_OFFSET)))
+        self.__offsetLineEdit.editingFinished.connect(self.__onTriggerOffsetChanged)
         self.__offsetLineEdit.setValidator(validator)
         controlPanelLayout.addWidget(self.__offsetLineEdit)
         # control panel - run
@@ -132,6 +133,10 @@ class MainWindowView(QMainWindow):
         filePath, _ = QFileDialog.getOpenFileName(self, "파일 선택", "", "CSV (*.csv)")
         if filePath:
             self.__setViewModelProperty(self.BINDING_PROPERTY_FILENAME, filePath)
+
+    def __onTriggerOffsetChanged(self):
+        offset = int(self.__offsetLineEdit.text())
+        self.__setViewModelProperty(self.BINDING_PROPERTY_TRIGGER_OFFSET, offset)
 #endregion
 
 #region MVVM Helper
