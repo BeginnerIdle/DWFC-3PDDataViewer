@@ -10,6 +10,6 @@ os.environ["PIPENV_IGNORE_VIRTUALENVS"] = "1"
 
 # pipenv install 실행
 if platform.system() == "Windows":
-    subprocess.run(["pipenv", "install"], shell=True)
+    subprocess.run(["pipenv", "install"], shell=False)
 else:
     subprocess.run(["pipenv", "install"], shell=False)
